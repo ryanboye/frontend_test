@@ -17,7 +17,74 @@
 			border: 1px solid #CCCCCC;
 			vertical-align:middle; margin-bottom: 3px;
 		}
+
+		#headingTabs{
+			list-style-type: none;
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		#headingTabs li{
+			float: left;
+			background-color: #0f0f0f;
+			margin: 0 10px -5px 0;
+			padding: 2px 30px;
+		}
+		.tab{
+			width: 500px;
+			background-color: #0f0f0f;
+			padding: 20px;
+			
+		}
+		.heading a{
+			color: #696969;
+		}
+		.pinned a{
+			color:#d62b1d;
+		}
 	</style>
+	<script type="text/javascript">
+		// Initialize objects so that they aren't undefined
+		var hide_all_tabs,tabs,show_tab_one,show_tab_two,show_tab_three;
+
+		// Event listener again to wait for page load
+		window.addEventListener('load', function() { 
+			// Get all the objects we need, the tabs, and the body for each tab
+			var tabs = document.getElementsByClassName("heading");
+			var tab_contents = document.getElementsByClassName("tab");
+			var tab_body_1 = document.getElementById("tab_body_1");
+			var tab_body_2 = document.getElementById("tab_body_2");
+			var tab_body_3 = document.getElementById("tab_body_3");
+
+			// hides all the tabs, removes pinned state off heading
+			hide_all_tabs = function () {
+				for(var i=0;i<tab_contents.length;i++){
+					tab_contents[i].style.cssText = "display:none";
+					tabs[i].className = 'heading';
+				}
+			}
+
+			// show an individual tab, and add a pinned state to the heading
+			show_tab_one = function (){
+				hide_all_tabs();
+				tab_body_1.style.cssText = "display:block";
+				tabs[0].className = 'heading pinned';
+			}
+			show_tab_two = function (){
+				hide_all_tabs();
+				tab_body_2.style.cssText = "display:block";
+				tabs[1].className = 'heading pinned';
+			}
+			show_tab_three = function (){
+				hide_all_tabs();
+				tab_body_3.style.cssText = "display:block";
+				tabs[2].className = 'heading pinned';
+			}
+
+			show_tab_one();
+		});
+	</script>
+
 </head>
 <body>	
 	<div id="headwrap">
@@ -27,35 +94,36 @@
 	</div>
 	<div id="content">
 		<h1><span class="red">Tabbed</span> content</h1>
-
 		<p>
 			Using HTML, CSS, and JavaScript, create a functional tabbed content container in the div below.  Each tab should contain different content, and content should change when clicking on a different tab.
 		</p>
-
 		<div class="picture">
 			<img src="../img/tabbed_content.png" />
 			<p>Example of a tabbed content container.</p>
 		</div>
-
 		<hr/>
-
 		<div id="container">
 			Turn this content into a tabbed container.
-
-			<h3>Tab 1</h3>
-			<p>
-				Gingerbread muffin gummies gingerbread macaroon. Lollipop candy applicake toffee faworki. Bear claw topping jelly toffee toffee powder tiramisu candy chupa chups. Chupa chups dragee icing applicake chupa chups dessert. Croissant jelly faworki marzipan tootsie roll marshmallow. Marshmallow toffee sweet roll fruitcake.
-			</p>
-
-			<h3>Tab 2</h3>
-			<p>
-				Chocolate faworki croissant brownie halvah macaroon gummi bears wypas. Chupa chups icing gummies pudding dessert carrot cake. Cupcake jelly beans sweet roll icing ice cream apple pie tootsie roll gummi bears marzipan. Brownie gummies chupa chups pie. Cupcake jujubes topping. 
-			</p>
-
-			<h3>Tab 3</h3>
-			<p>
-				Cheesecake jelly beans ice cream lollipop sweet pastry. Chupa chups dessert cheesecake sesame snaps. Cookie ice cream candy canes pastry cake muffin. Icing chocolate sweet gummi bears powder oat cake oat cake lemon drops.
-			</p>
+			<ul id="headingTabs">
+				<li class="heading"><a href="#" onclick="show_tab_one()"><h3>Tab 1</h3></a></li>
+				<li class="heading"><a href="#" onclick="show_tab_two()"><h3>Tab 2</h3></a></li>
+				<li class="heading"><a href="#" onclick="show_tab_three()"><h3>Tab 3</h3></a></li>
+			</ul>
+			<div id="tab_body_1" class="tab" onclick="tab1">
+				<p>
+					Gingerbread muffin gummies gingerbread macaroon. Lollipop candy applicake toffee faworki. Bear claw topping jelly toffee toffee powder tiramisu candy chupa chups. Chupa chups dragee icing applicake chupa chups dessert. Croissant jelly faworki marzipan tootsie roll marshmallow. Marshmallow toffee sweet roll fruitcake.
+				</p>
+			</div>
+			<div id="tab_body_2" class="tab" onclick="tab2">
+				<p>
+					Chocolate faworki croissant brownie halvah macaroon gummi bears wypas. Chupa chups icing gummies pudding dessert carrot cake. Cupcake jelly beans sweet roll icing ice cream apple pie tootsie roll gummi bears marzipan. Brownie gummies chupa chups pie. Cupcake jujubes topping. 
+				</p>
+			</div>
+			<div id="tab_body_3" class="tab" onclick="tab3">
+				<p>
+					Cheesecake jelly beans ice cream lollipop sweet pastry. Chupa chups dessert cheesecake sesame snaps. Cookie ice cream candy canes pastry cake muffin. Icing chocolate sweet gummi bears powder oat cake oat cake lemon drops.
+				</p>
+			</div>
 		</div>
 	</div>
 </body>

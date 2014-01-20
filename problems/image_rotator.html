@@ -4,25 +4,27 @@
 	<title>Frontend Coding Test</title>
 	<link type="text/css" rel="stylesheet" href="../css/style.css" />
 	<style type="text/css">
-		#rotator {
+		#container{
 			width: 450px;  
-			height: 266px; /* I changed your size here because it was larger then the image <3 */
-			border: 0; /* Borders are gross also, so I changed this too. */
+			height: 266px; 
+			overflow: hidden;
+			position: relative;
+		}
+		#rotator {
 			background: #1f1f1f;
 			text-align: left;
 			position: relative;
 			padding: 0;
 			margin: 0;
 			list-style-type: none;
-			overflow: hidden;
 		}
 		#rotator li aside{
-			background: -moz-linear-gradient(top,  rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.65) 100%); /* FF3.6+ */
-			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.18)), color-stop(100%,rgba(0,0,0,0.65))); /* Chrome,Safari4+ */
-			background: -webkit-linear-gradient(top,  rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.65) 100%); /* Chrome10+,Safari5.1+ */
-			background: -o-linear-gradient(top,  rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.65) 100%); /* Opera 11.10+ */
-			background: -ms-linear-gradient(top,  rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.65) 100%); /* IE10+ */
-			background: linear-gradient(to bottom,  rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.65) 100%); /* W3C */
+			background: -moz-linear-gradient(top,  rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.5) 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.0)), color-stop(100%,rgba(0,0,0,0.3))); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top,  rgba(0,0,0,0.0) 0%,rgba(0,0,0,0.5) 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top,  rgba(0,0,0,0.0) 0%,rgba(0,0,0,0.5) 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top,  rgba(0,0,0,0.0) 0%,rgba(0,0,0,0.5) 100%); /* IE10+ */
+			background: linear-gradient(to bottom,  rgba(0,0,0,0.0) 0%,rgba(0,0,0,0.5) 100%); /* W3C */
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2e000000', endColorstr='#a6000000',GradientType=0 ); /* IE6-9 */
 			position: absolute;
 			left:0;
@@ -33,26 +35,42 @@
 		#rotator li aside div{
 			position: absolute;
 			left: 10px;
-			bottom: 50px;
-			height: 50px;
+			bottom: 9px;
+			padding: 13px;
+			width: 60%;
 		}
 		#rotator li aside h4, 
 		#rotator li aside p{ 
+			font-weight: 200;
+			text-shadow: 2px 2px 2px #000;
 			margin-bottom: 5px;
+			display: block;
 		}
 		#rotator li aside h4{
-			font-size: 20px;
+			font-size: 30px;
 		}
 		#rotator li aside p{
-			font-size: 12px;
+			font-size: 14px;
 		}
 		#rotator li{
-		    opacity: 0; /* Starts off hidden, we'll manually show it later */
-		    position: absolute;
-		    transform: scale(0); /* These lines handle the transforms */
-		    -webkit-transform: scale(0);
-		    transition: all .7s ease-in-out;
-		    -webkit-transition: all .7s ease-in-out;
+			position: absolute;
+			transition: all 0.7s ease-in-out;
+			-webkit-transition: all 0.7s ease-in-out;
+			-moz-transition: all 0.7s ease-in-out;
+		}
+		.right{
+			left:450px !important;
+		}
+		.left{
+			left:-450px !important;
+		}
+		.center{
+			left: 0 !important;
+		}
+		.noTransition{
+			transition: all 0s !important;
+			-webkit-transition: all 0s !important;
+			-moz-transition: all 0s !important;
 		}
 		#progressBar{
 			position: absolute;
@@ -61,104 +79,140 @@
 			right: 0;
 			height: 3px;
 			background-color: #d3175a;
-			width:0;
+			width:0%;
+			transition: all 3s ease-in-out;
+			-webkit-transition: all 3s ease-in-out;
+			z-index: 3;
+		}
+		.fullWidth{
+			width: 100% !important;
 		}
 	</style>
+	<script type="text/javascript">
+	// This slider works on the premise of advancing the slide
+	// every time the loading bar is complete. I set the transition
+	// above so that the loading transition would take about 3 seconds
+	// an event then fires to move the slides and reset the timer.
+		
+	// Because this is always the problem otherwise
+	window.addEventListener('load', function() { 
+
+		// Grabbing the elements we want to manipulate, and the slides within it
+		var rotator = document.getElementById("rotator");
+		var listItems = rotator.getElementsByTagName("li");
+		var names = rotator.getElementsByTagName("h4");
+		var captions = rotator.getElementsByTagName("p");
+		var progressBar = document.getElementById("progressBar");
+
+		// These are the counters we need to keep track of our slides
+		var current_slide = 0;
+		var previous_slide = 0;
+		var next_slide = 0;
+
+
+		var slides = [{name: 'Katarina', caption: 'Fruitcake bonbon donut jelly-o brownie biscuit marzipan pie.'},
+		{name: 'Red Card Katarina', caption: 'Cheesecake marzipan cupcake biscuit candy canes pudding.'},
+		{name: 'Kitty Cat Katarina', caption: 'Applicake topping halvah lemon drops wypas cotton candy.'},
+		{name: 'High Command Katarina', caption: 'Oat cake macaroon souffle cupcake chupa chups chocolate bar bear claw dragee lemon drops.'}]
+
+
+        //initialize event listeners, only run the progress bar when the slide isn't moviing
+        // and only move the slide when the progress bar isn't running.
+        for (var i = 0; i < listItems.length; i++) {
+        	listItems[i].addEventListener("transitionend", startTimer, true);
+        }
+        progressBar.addEventListener("transitionend", advance_slide, true);
+
+        function advance_slide(){
+        	progressBar.className = "noTransition";
+        	for (var i = 0; i < listItems.length; i++) {
+                //Make sure all the slides are off, first and foremost. We'll then turn the correct one on.
+                names[i].innerHTML = slides[i].name;
+                captions[i].innerHTML = slides[i].caption;
+                listItems[i].className = "right noTransition";
+            }
+
+            //Turn on the correct slide.
+            previous_slide = current_slide - 1;
+            next_slide = current_slide + 1;
+
+            if (previous_slide < 0){
+            	previous_slide =  listItems.length-1;
+            }
+
+            if (next_slide > listItems.length - 1){
+            	next_slide =  0;
+            }
+
+            // Slide the previous slide off to the left, bring
+            // the next slide front and center.
+            listItems[previous_slide].className = "left";
+            listItems[current_slide].className = "center";	
+            
+            // Advance the slide counter
+            current_slide++;
+
+            //Wrap the current_slide counter back to zero if it runs over
+            if (current_slide == listItems.length){
+            	current_slide = 0;
+            }
+        }
+
+        function startTimer () {
+        	progressBar.className = "fullWidth";
+        }
+
+        advance_slide();
+
+    }, false);
+
+</script>
 </head>
 <body>
 	<div id="headwrap">
-	<div class="head">
-		<div class="logo">Riot Games</div>
+		<div class="head">
+			<div class="logo">Riot Games</div>
+		</div>
 	</div>
-</div>
 
-<div id="content">
-	<h1><span class="red">Image</span> Rotator</h1>
+	<div id="content">
+		<h1><span class="red">Image</span> Rotator</h1>
 
-	<p>
-		Using the below images, make a rotator in the box below that shows only one of the Katarina skins every 3 seconds.  The rotator should also display the correct image title and description with each image change.
-	</p>
-	<p>
-		It would be really awesome if the slides animated between one another!
-	</p>
+		<p>
+			Using the below images, make a rotator in the box below that shows only one of the Katarina skins every 3 seconds.  The rotator should also display the correct image title and description with each image change.
+		</p>
+		<p>
+			It would be really awesome if the slides animated between one another!
+		</p>
 
-	<hr />
+		<hr />
 
-	<h4>Katarina</h4>
-	<p>Fruitcake bonbon donut jelly-o brownie biscuit marzipan pie.</p>
-	<img src="../img/kat_1.jpg" /><br/>
+		<h4>Katarina</h4>
+		<p>Fruitcake bonbon donut jelly-o brownie biscuit marzipan pie.</p>
+		<img src="../img/kat_1.jpg" /><br/>
 
-	<h4>Red Card Katarina</h4>
-	<p>Cheesecake marzipan cupcake biscuit candy canes pudding.</p>
-	<img src="../img/kat_2.jpg" /><br/>
+		<h4>Red Card Katarina</h4>
+		<p>Cheesecake marzipan cupcake biscuit candy canes pudding.</p>
+		<img src="../img/kat_2.jpg" /><br/>
 
-	<h4>Kitty Cat Katarina</h4>
-	<p>Applicake topping halvah lemon drops wypas cotton candy.</p>
-	<img src="../img/kat_3.jpg" /><br/>
+		<h4>Kitty Cat Katarina</h4>
+		<p>Applicake topping halvah lemon drops wypas cotton candy.</p>
+		<img src="../img/kat_3.jpg" /><br/>
 
-	<h4>High Command Katarina</h4>
-	<p>Oat cake macaroon souffle cupcake chupa chups chocolate bar bear claw dragee lemon drops.</p>
-	<img src="../img/kat_4.jpg" /><br/>
+		<h4>High Command Katarina</h4>
+		<p>Oat cake macaroon souffle cupcake chupa chups chocolate bar bear claw dragee lemon drops.</p>
+		<img src="../img/kat_4.jpg" /><br/>
 
-	<hr/>
-
-	<ul id="rotator">  <!-- Changed your div to a UL rather than making an unecessary UL inside of it -->
-		<div id="progressBar"></div>
-		<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_1.jpg" class="slide" /></li>
-		<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_2.jpg" class="slide" /></li>
-		<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_3.jpg" class="slide" /></li>
-		<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_4.jpg" class="slide" /></li>
+		<hr/>
+		<div id="container">
+			<div id="progressBar"></div>
+			<ul id="rotator">  <!-- Changed your div to a UL rather than making an unecessary UL inside of it -->
+				<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_1.jpg"/></li>
+				<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_2.jpg"/></li>
+				<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_3.jpg"/></li>
+				<li><aside><div><h4></h4><p></p></div></aside><img src="../img/kat_4.jpg"/></li>
+			</ul>
+		</div>
 	</div>
-</div>
-
-<script type="text/javascript">
-		var rotator = document.getElementById("rotator");
-        var images = document.getElementsByTagName("li");
-
-		var counter = 0;
-	 images[0].style.cssText = "opacity:1;transform: scale(1);-webkit-opacity:1;-webkit-transform: scale(1);";
-</script>
-
-<script type="text/javascript">
-		// This is after the body content so that it can be loaded after the rest 
-		// of the page, this is in leiu of using an overly complex document.ready
-		// javascript equivalent that works in all browsers.
-
-		// Grabbing the container, and the slides within it
-		var rotator = document.getElementById("rotator");
-        var listItems = rotator.getElementsByTagName("li");
-        var names = rotator.getElementsByTagName("h4");
-        var captions = rotator.getElementsByTagName("p");
-        var progressBar = document.getElementById("progressBar");
-		var counter = 0;
-
-		var slides = [{name: 'Katarina', caption: 'Fruitcake bonbon donut jelly-o brownie biscuit marzipan pie.'},
-					  {name: 'Red Card Katarina', caption: 'Cheesecake marzipan cupcake biscuit candy canes pudding.'},
-					  {name: 'Kitty Cat Katarina', caption: 'Applicake topping halvah lemon drops wypas cotton candy.'},
-					  {name: 'High Command Katarina', caption: 'Oat cake macaroon souffle cupcake chupa chups chocolate bar bear claw dragee lemon drops.'}]
-        
-		function slideChange(){
-            for (var i = 0; i < listItems.length; i++) {
-            	//Make sure all the slides are off, first and foremost. We'll then turn the correct one on.
-                names[i].innerHTML = slides[i].name;
-                captions[i].innerHTML = slides[i].caption;
-                listItems[i].style.cssText = "opacity:0;transform: scale(0);-webkit-opacity:0;-webkit-transform: scale(0);";
-            }
-        	//Turn on the correct slide.
-        	listItems[counter].style.cssText = "opacity:1;transform: scale(1);-webkit-opacity:1;-webkit-transform: scale(1);transition: opacity 1s ease-in-out";
-        	counter++;
-
-        	//Wrap the counter back to zero if it runs over
-            if (counter == images.length) {
-                counter = 0;
-            }
-		}
-
-		slideChange();
-        setInterval(slideChange, 3000);
-
-</script>
-
-
 </body>
 </html>
